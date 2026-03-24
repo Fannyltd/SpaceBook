@@ -1,0 +1,1530 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SpaceBook — Sorbonne Paris Nord</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green: #2ecc71;
+    --red: #e74c3c;
+    --grey: #95a5a6;
+    --navy: #0d1b2a;
+    --navy-mid: #1a2e42;
+    --navy-light: #243d56;
+    --cream: #f5f0e8;
+    --gold: #c9a84c;
+    --text: #e8e4dc;
+    --text-dim: #8a9bb0;
+    --border: rgba(255,255,255,0.07);
+    --card: rgba(255,255,255,0.04);
+    --card-hover: rgba(255,255,255,0.08);
+    --sidebar-w: 240px;
+    --header-h: 60px;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--navy);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ─── TOP NAV ─── */
+  .topnav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    height: var(--header-h);
+    background: rgba(13,27,42,0.95);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center;
+    padding: 0 24px;
+    gap: 0;
+  }
+  .topnav .brand {
+    display: flex; align-items: center; gap: 10px;
+    font-family: 'Playfair Display', serif;
+    font-size: 18px; font-weight: 700;
+    color: var(--cream);
+    margin-right: auto;
+  }
+  .brand-dot { width:8px;height:8px;border-radius:50%;background:var(--green);display:inline-block;margin-right:2px; }
+  .topnav nav { display:flex; gap:4px; align-items:center; }
+  .topnav nav button {
+    background: none; border: none; cursor: pointer;
+    color: var(--text-dim); font-family: 'DM Sans', sans-serif;
+    font-size: 13.5px; font-weight: 500;
+    padding: 8px 14px; border-radius: 8px;
+    transition: all .2s;
+  }
+  .topnav nav button:hover, .topnav nav button.active {
+    background: var(--card-hover); color: var(--text);
+  }
+  .topnav nav button.active { color: var(--cream); }
+  .btn-deconnect {
+    background: rgba(231,76,60,0.1) !important;
+    color: var(--red) !important;
+    border: 1px solid rgba(231,76,60,0.2) !important;
+  }
+  .btn-deconnect:hover { background: rgba(231,76,60,0.2) !important; }
+  .avatar {
+    width:32px;height:32px;border-radius:50%;
+    background: linear-gradient(135deg,var(--gold),#8b5e2a);
+    display:flex;align-items:center;justify-content:center;
+    font-size:13px;font-weight:600;color:#fff;
+    cursor:pointer; margin-right:8px;
+    border: 2px solid rgba(201,168,76,0.4);
+    transition: transform .2s;
+  }
+  .avatar:hover { transform: scale(1.1); }
+
+  /* ─── LAYOUT ─── */
+  .layout {
+    display: flex;
+    margin-top: var(--header-h);
+    min-height: calc(100vh - var(--header-h));
+  }
+
+  /* ─── SIDEBAR FILTERS ─── */
+  .sidebar {
+    width: var(--sidebar-w);
+    background: rgba(13,27,42,0.6);
+    border-right: 1px solid var(--border);
+    padding: 20px 16px;
+    position: fixed;
+    top: var(--header-h);
+    bottom: 0;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--navy-light) transparent;
+  }
+  .sidebar h3 {
+    font-size: 11px; letter-spacing: .12em; text-transform: uppercase;
+    color: var(--text-dim); margin-bottom: 14px; margin-top: 20px;
+    padding-bottom: 6px; border-bottom: 1px solid var(--border);
+  }
+  .sidebar h3:first-of-type { margin-top: 0; }
+  .filter-group { margin-bottom: 6px; }
+  .filter-btn {
+    width:100%;text-align:left;background:none;border:none;
+    color: var(--text-dim); font-family:'DM Sans',sans-serif;
+    font-size:13px; padding: 8px 10px; border-radius:7px;
+    cursor:pointer; transition: all .15s; display:flex;align-items:center;gap:8px;
+  }
+  .filter-btn:hover { background:var(--card-hover); color:var(--text); }
+  .filter-btn.sel { background:rgba(46,204,113,0.1); color:var(--green); }
+  .filter-btn .dot {
+    width:7px;height:7px;border-radius:50%;
+    background: var(--border); flex-shrink:0;
+    transition: background .15s;
+  }
+  .filter-btn.sel .dot { background:var(--green); }
+
+  .range-wrap { padding: 4px 10px 10px; }
+  .range-wrap label { font-size:12px;color:var(--text-dim);display:flex;justify-content:space-between;margin-bottom:6px; }
+  .range-wrap label span { color:var(--green);font-weight:600; }
+  input[type=range] {
+    width:100%; accent-color:var(--green); cursor:pointer;
+    background: transparent;
+  }
+
+  .equip-list { display:flex;flex-direction:column;gap:5px; }
+  .equip-item {
+    display:flex;align-items:center;gap:8px;
+    font-size:13px;color:var(--text-dim);cursor:pointer;
+    padding:6px 10px;border-radius:7px;transition:all .15s;
+  }
+  .equip-item:hover { background:var(--card-hover);color:var(--text); }
+  .equip-item input[type=checkbox] { accent-color:var(--green);cursor:pointer; }
+  .equip-item.checked { color:var(--text); }
+
+  /* ─── MAIN ─── */
+  .main {
+    margin-left: var(--sidebar-w);
+    flex:1;
+    padding: 24px 28px;
+    min-width: 0;
+  }
+
+  /* ─── VIEW TOGGLE ─── */
+  .view-bar {
+    display:flex;align-items:center;justify-content:space-between;
+    margin-bottom:22px;
+  }
+  .view-bar h1 {
+    font-family: 'Playfair Display',serif;
+    font-size:22px; font-weight:700; color:var(--cream);
+  }
+  .view-bar h1 small {
+    font-family:'DM Sans',sans-serif;font-size:13px;font-weight:400;
+    color:var(--text-dim); margin-left:10px;
+  }
+  .toggle-wrap { display:flex;gap:4px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:3px; }
+  .toggle-wrap button {
+    background:none;border:none;cursor:pointer;
+    font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;
+    color:var(--text-dim);padding:7px 18px;border-radius:7px;
+    transition:all .2s;
+  }
+  .toggle-wrap button.on { background:var(--navy-light);color:var(--cream); }
+
+  /* ─── LÉGENDE ─── */
+  .legend {
+    display:flex;gap:20px;align-items:center;
+    margin-bottom:22px;
+    padding: 12px 16px;
+    background:var(--card); border:1px solid var(--border); border-radius:10px;
+  }
+  .leg-item { display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--text-dim); }
+  .leg-dot { width:10px;height:10px;border-radius:50%; }
+
+  /* ─── CALENDAR ─── */
+  .calendar-section { margin-bottom: 32px; }
+  .cal-header {
+    display:flex;align-items:center;gap:12px;margin-bottom:16px;
+  }
+  .cal-nav {
+    background:var(--card);border:1px solid var(--border);
+    width:32px;height:32px;border-radius:8px;
+    display:flex;align-items:center;justify-content:center;
+    cursor:pointer;font-size:16px;color:var(--text-dim);
+    transition:all .15s;
+  }
+  .cal-nav:hover { background:var(--card-hover);color:var(--text); }
+  .cal-title { font-size:15px;font-weight:600;color:var(--cream);min-width:180px; }
+  .cal-today-btn {
+    margin-left:auto;
+    background:none;border:1px solid var(--border);
+    color:var(--text-dim);font-family:'DM Sans',sans-serif;
+    font-size:12px;padding:6px 12px;border-radius:7px;cursor:pointer;
+    transition:all .15s;
+  }
+  .cal-today-btn:hover { background:var(--card-hover);color:var(--text); }
+
+  /* MONTH VIEW */
+  .month-grid {
+    display:grid; grid-template-columns:repeat(7,1fr);
+    border:1px solid var(--border); border-radius:12px; overflow:hidden;
+  }
+  .month-dayname {
+    padding:10px 0;text-align:center;font-size:11px;
+    letter-spacing:.08em;text-transform:uppercase;
+    color:var(--text-dim);background:var(--card);
+    border-bottom:1px solid var(--border);
+  }
+  .month-cell {
+    border-right:1px solid var(--border);
+    border-bottom:1px solid var(--border);
+    min-height:90px;padding:8px;
+    background: rgba(13,27,42,0.4);
+    cursor:pointer;transition:background .15s;
+    position:relative;
+  }
+  .month-cell:nth-child(7n) { border-right:none; }
+  .month-cell:hover { background:var(--card-hover); }
+  .month-cell.other-month { opacity:.35; }
+  .month-cell.today { background: rgba(46,204,113,0.05); }
+  .month-cell.today .cell-num { color:var(--green);font-weight:700; }
+  .cell-num {
+    font-size:12.5px;color:var(--text-dim);font-weight:500;margin-bottom:5px;
+  }
+  .cell-events { display:flex;flex-direction:column;gap:3px; }
+  .cell-ev {
+    font-size:10.5px;padding:2px 6px;border-radius:4px;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+    font-weight:500;
+  }
+  .cell-ev.green { background:rgba(46,204,113,.18);color:var(--green); }
+  .cell-ev.red   { background:rgba(231,76,60,.18);color:var(--red); }
+  .cell-ev.grey  { background:rgba(149,165,166,.15);color:var(--grey); }
+
+  /* WEEK VIEW */
+  .week-grid {
+    border:1px solid var(--border);border-radius:12px;overflow:hidden;
+  }
+  .week-header-row {
+    display:grid;grid-template-columns: 56px repeat(7,1fr);
+    background:var(--card);border-bottom:1px solid var(--border);
+  }
+  .week-corner { border-right:1px solid var(--border); }
+  .week-day-col {
+    padding:10px 6px;text-align:center;
+    border-right:1px solid var(--border);
+    font-size:12px;
+  }
+  .week-day-col:last-child { border-right:none; }
+  .week-day-col .wdc-name { color:var(--text-dim);font-size:11px;letter-spacing:.06em;text-transform:uppercase; }
+  .week-day-col .wdc-num { font-size:18px;font-weight:600;color:var(--cream);margin-top:2px; }
+  .week-day-col .wdc-num.today-num { color:var(--green); }
+
+  .week-body { display:flex;flex-direction:column; }
+  .week-row {
+    display:grid;grid-template-columns: 56px repeat(7,1fr);
+    border-bottom:1px solid var(--border);min-height:52px;
+  }
+  .week-row:last-child { border-bottom:none; }
+  .time-label {
+    border-right:1px solid var(--border);
+    display:flex;align-items:flex-start;justify-content:center;
+    padding-top:6px;font-size:11px;color:var(--text-dim);
+  }
+  .week-cell {
+    border-right:1px solid var(--border);
+    padding:3px;position:relative;cursor:pointer;
+    transition:background .15s;
+  }
+  .week-cell:last-child { border-right:none; }
+  .week-cell:hover { background:var(--card-hover); }
+  .week-event {
+    position:absolute;left:3px;right:3px;top:3px;
+    border-radius:5px;padding:3px 6px;
+    font-size:11px;font-weight:500;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  }
+  .week-event.green { background:rgba(46,204,113,.2);color:var(--green);border-left:3px solid var(--green); }
+  .week-event.red   { background:rgba(231,76,60,.2);color:var(--red);border-left:3px solid var(--red); }
+  .week-event.grey  { background:rgba(149,165,166,.15);color:var(--grey);border-left:3px solid var(--grey); }
+
+  /* ─── ROOMS ─── */
+  .section-title {
+    font-family:'Playfair Display',serif;font-size:18px;font-weight:700;
+    color:var(--cream);margin-bottom:16px;
+    display:flex;align-items:center;gap:10px;
+  }
+  .section-title span { font-family:'DM Sans',sans-serif;font-size:13px;font-weight:400;color:var(--text-dim); }
+
+  .building-block { margin-bottom:30px; }
+  .building-label {
+    font-size:12px;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--gold);font-weight:600;margin-bottom:12px;
+    display:flex;align-items:center;gap:8px;
+  }
+  .building-label::after {
+    content:'';flex:1;height:1px;background:linear-gradient(90deg,rgba(201,168,76,.3),transparent);
+  }
+  .rooms-grid {
+    display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;
+  }
+  .room-card {
+    background:var(--card);border:1px solid var(--border);
+    border-radius:12px;padding:16px;cursor:pointer;
+    transition:all .2s;position:relative;overflow:hidden;
+  }
+  .room-card::before {
+    content:'';position:absolute;top:0;left:0;right:0;height:3px;
+    transition:opacity .2s;
+  }
+  .room-card.status-green::before { background:var(--green); }
+  .room-card.status-red::before   { background:var(--red); }
+  .room-card.status-grey::before  { background:var(--grey); }
+  .room-card:hover { background:var(--card-hover);transform:translateY(-2px); }
+  .room-card:hover { box-shadow: 0 8px 24px rgba(0,0,0,0.3); }
+
+  .room-head { display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px; }
+  .room-name { font-size:15px;font-weight:600;color:var(--cream); }
+  .room-badge {
+    font-size:10.5px;font-weight:600;padding:3px 8px;border-radius:20px;
+    letter-spacing:.04em;
+  }
+  .badge-green { background:rgba(46,204,113,.15);color:var(--green); }
+  .badge-red   { background:rgba(231,76,60,.15);color:var(--red); }
+  .badge-grey  { background:rgba(149,165,166,.12);color:var(--grey); }
+
+  .room-meta { display:flex;flex-direction:column;gap:5px; }
+  .room-meta-row {
+    display:flex;align-items:center;gap:7px;
+    font-size:12px;color:var(--text-dim);
+  }
+  .room-meta-row svg { flex-shrink:0;opacity:.6; }
+  .room-equip {
+    margin-top:10px;display:flex;flex-wrap:wrap;gap:5px;
+  }
+  .equip-tag {
+    font-size:10.5px;padding:2px 8px;border-radius:20px;
+    background:rgba(255,255,255,.05);color:var(--text-dim);
+    border:1px solid var(--border);
+  }
+  .room-footer {
+    margin-top:12px;padding-top:10px;border-top:1px solid var(--border);
+    font-size:11.5px;color:var(--text-dim);
+  }
+  .room-footer strong { color:var(--red); }
+  .room-footer.free strong { color:var(--green); }
+
+  /* ─── MODAL ─── */
+  .modal-overlay {
+    display:none;position:fixed;inset:0;z-index:200;
+    background:rgba(5,12,20,0.75);backdrop-filter:blur(6px);
+    align-items:center;justify-content:center;
+  }
+  .modal-overlay.open { display:flex; }
+  .modal {
+    background:var(--navy-mid);border:1px solid rgba(255,255,255,.12);
+    border-radius:16px;padding:28px;width:420px;max-width:95vw;
+    position:relative;
+    animation: modalIn .25s ease;
+  }
+  @keyframes modalIn {
+    from { opacity:0;transform:translateY(20px) scale(.97); }
+    to   { opacity:1;transform:none; }
+  }
+  .modal-close {
+    position:absolute;top:14px;right:14px;
+    background:none;border:none;color:var(--text-dim);font-size:20px;cursor:pointer;
+    width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;
+    transition:all .15s;
+  }
+  .modal-close:hover { background:var(--card-hover);color:var(--text); }
+  .modal h2 { font-family:'Playfair Display',serif;font-size:20px;margin-bottom:6px;color:var(--cream); }
+  .modal .modal-sub { font-size:13px;color:var(--text-dim);margin-bottom:20px; }
+  .modal-status-bar {
+    display:flex;align-items:center;gap:10px;
+    padding:10px 14px;border-radius:8px;margin-bottom:20px;
+    font-size:13px;font-weight:500;
+  }
+  .modal-status-bar.green { background:rgba(46,204,113,.1);color:var(--green);border:1px solid rgba(46,204,113,.2); }
+  .modal-status-bar.red   { background:rgba(231,76,60,.1);color:var(--red);border:1px solid rgba(231,76,60,.2); }
+  .modal-status-bar.grey  { background:rgba(149,165,166,.1);color:var(--grey);border:1px solid rgba(149,165,166,.2); }
+  .modal-info-grid {
+    display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;
+  }
+  .modal-info-item { background:rgba(255,255,255,.04);border-radius:8px;padding:12px; }
+  .modal-info-item label { font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-dim);display:block;margin-bottom:4px; }
+  .modal-info-item p { font-size:14px;font-weight:600;color:var(--cream); }
+  .modal-equip-list { display:flex;flex-wrap:wrap;gap:7px;margin-bottom:22px; }
+  .modal-equip-tag {
+    padding:5px 12px;border-radius:20px;font-size:12px;
+    background:rgba(255,255,255,.06);color:var(--text);
+    border:1px solid rgba(255,255,255,.1);
+  }
+  .modal-btn-row { display:flex;gap:10px; }
+  .btn-primary {
+    flex:1;padding:11px;border:none;border-radius:9px;
+    background:var(--green);color:#0d1b2a;
+    font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;
+    transition:all .2s;
+  }
+  .btn-primary:hover { background:#27ae60;transform:translateY(-1px); }
+  .btn-primary:disabled { background:rgba(149,165,166,.3);color:var(--text-dim);cursor:not-allowed;transform:none; }
+  .btn-secondary {
+    padding:11px 18px;border:1px solid var(--border);border-radius:9px;
+    background:none;color:var(--text-dim);
+    font-family:'DM Sans',sans-serif;font-size:14px;cursor:pointer;
+    transition:all .2s;
+  }
+  .btn-secondary:hover { background:var(--card-hover);color:var(--text); }
+
+  /* ─── SCROLLBAR ─── */
+  ::-webkit-scrollbar { width:6px; }
+  ::-webkit-scrollbar-track { background:transparent; }
+  ::-webkit-scrollbar-thumb { background:var(--navy-light);border-radius:3px; }
+
+  /* ─── TOAST ─── */
+  .toast {
+    position:fixed;bottom:24px;right:24px;z-index:300;
+    background:rgba(26,46,66,0.97);border:1px solid rgba(46,204,113,.3);
+    border-radius:10px;padding:12px 18px;
+    font-size:13.5px;color:var(--green);
+    display:flex;align-items:center;gap:10px;
+    box-shadow:0 8px 24px rgba(0,0,0,.4);
+    transform:translateY(80px);opacity:0;
+    transition:all .35s cubic-bezier(.34,1.56,.64,1);
+    pointer-events:none;
+  }
+  .toast.show { transform:none;opacity:1; }
+
+  /* tabs */
+  .page-section { display:none; }
+  .page-section.active { display:block; }
+
+  /* reservations page */
+  .resa-table { width:100%;border-collapse:collapse;margin-top:8px; }
+  .resa-table th {
+    text-align:left;padding:10px 14px;font-size:11px;letter-spacing:.08em;
+    text-transform:uppercase;color:var(--text-dim);
+    border-bottom:1px solid var(--border);font-weight:500;
+  }
+  .resa-table td {
+    padding:12px 14px;font-size:13.5px;color:var(--text);
+    border-bottom:1px solid var(--border);
+  }
+  .resa-table tr:last-child td { border-bottom:none; }
+  .resa-table tr:hover td { background:var(--card); }
+  .resa-row-status {
+    display:inline-flex;align-items:center;gap:6px;
+    font-size:12px;font-weight:600;
+    padding:3px 10px;border-radius:20px;
+  }
+  .annuler-btn {
+    background:rgba(231,76,60,.1);border:1px solid rgba(231,76,60,.2);
+    color:var(--red);font-family:'DM Sans',sans-serif;
+    font-size:12px;padding:5px 12px;border-radius:6px;cursor:pointer;
+    transition:all .15s;
+  }
+  .annuler-btn:hover { background:rgba(231,76,60,.2); }
+
+  /* aide */
+  .aide-grid { display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px; }
+  .aide-card {
+    background:var(--card);border:1px solid var(--border);border-radius:12px;
+    padding:20px;
+  }
+  .aide-icon { font-size:28px;margin-bottom:12px; }
+  .aide-card h3 { font-size:15px;font-weight:600;color:var(--cream);margin-bottom:6px; }
+  .aide-card p { font-size:13px;color:var(--text-dim);line-height:1.6; }
+
+  /* ─── BOOKING MODAL ─── */
+  .bk-modal {
+    background: var(--navy-mid);
+    border: 1px solid rgba(255,255,255,.12);
+    border-radius: 18px;
+    padding: 32px;
+    width: 500px;
+    max-width: 96vw;
+    position: relative;
+    animation: modalIn .28s ease;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+  .bk-steps {
+    display: flex; gap: 0; margin-bottom: 28px;
+    border-radius: 10px; overflow: hidden;
+    border: 1px solid var(--border);
+  }
+  .bk-step {
+    flex: 1; text-align: center; padding: 9px 6px;
+    font-size: 12px; font-weight: 500; color: var(--text-dim);
+    background: var(--card); border-right: 1px solid var(--border);
+    transition: all .3s; position: relative;
+  }
+  .bk-step:last-child { border-right: none; }
+  .bk-step.done { background: rgba(46,204,113,.08); color: var(--green); }
+  .bk-step.active { background: rgba(46,204,113,.15); color: var(--green); font-weight: 600; }
+  .bk-step-num {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 18px; height: 18px; border-radius: 50%;
+    background: rgba(255,255,255,.08); font-size: 10px;
+    margin-right: 6px; transition: all .3s;
+  }
+  .bk-step.active .bk-step-num { background: var(--green); color: #0d1b2a; }
+  .bk-step.done .bk-step-num { background: rgba(46,204,113,.3); color: var(--green); }
+
+  .bk-pane { display: none; }
+  .bk-pane.active { display: block; animation: fadeSlide .25s ease; }
+  @keyframes fadeSlide {
+    from { opacity: 0; transform: translateX(12px); }
+    to   { opacity: 1; transform: none; }
+  }
+
+  .form-row { margin-bottom: 18px; }
+  .form-row label {
+    display: block; font-size: 11px; letter-spacing: .08em;
+    text-transform: uppercase; color: var(--text-dim); margin-bottom: 7px; font-weight: 500;
+  }
+  .form-select, .form-input {
+    width: 100%; padding: 11px 14px;
+    background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1);
+    border-radius: 9px; color: var(--text);
+    font-family: 'DM Sans', sans-serif; font-size: 14px;
+    appearance: none; cursor: pointer;
+    transition: border-color .2s, background .2s;
+    outline: none;
+  }
+  .form-select:focus, .form-input:focus {
+    border-color: rgba(46,204,113,.5); background: rgba(46,204,113,.05);
+  }
+  .form-select option { background: var(--navy-mid); color: var(--text); }
+
+  .time-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+  .avail-preview {
+    margin-top: 10px; border-radius: 9px; overflow: hidden;
+    border: 1px solid var(--border);
+  }
+  .avail-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 9px 14px; border-bottom: 1px solid var(--border);
+    font-size: 13px; cursor: pointer; transition: background .15s;
+  }
+  .avail-row:last-child { border-bottom: none; }
+  .avail-row:hover { background: var(--card-hover); }
+  .avail-row.selected { background: rgba(46,204,113,.1); }
+  .avail-slot { color: var(--text-dim); font-size: 12px; }
+  .avail-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+  .bk-warning {
+    display: flex; gap: 12px; align-items: flex-start;
+    background: rgba(201,168,76,.08); border: 1px solid rgba(201,168,76,.25);
+    border-radius: 10px; padding: 14px 16px; margin-bottom: 20px;
+  }
+  .bk-warning-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+  .bk-warning p { font-size: 12.5px; color: rgba(201,168,76,.9); line-height: 1.6; }
+  .bk-warning p strong { color: var(--gold); }
+
+  .bk-summary {
+    background: rgba(255,255,255,.03); border: 1px solid var(--border);
+    border-radius: 10px; padding: 16px; margin-bottom: 20px;
+  }
+  .bk-summary-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 7px 0; border-bottom: 1px solid var(--border);
+    font-size: 13.5px;
+  }
+  .bk-summary-row:last-child { border-bottom: none; padding-bottom: 0; }
+  .bk-summary-row span:first-child { color: var(--text-dim); font-size: 12px; }
+  .bk-summary-row span:last-child { color: var(--cream); font-weight: 500; }
+
+  .checkbox-row {
+    display: flex; align-items: flex-start; gap: 10px;
+    margin-bottom: 20px; cursor: pointer;
+  }
+  .checkbox-row input { accent-color: var(--green); margin-top: 3px; flex-shrink: 0; cursor: pointer; }
+  .checkbox-row span { font-size: 12.5px; color: var(--text-dim); line-height: 1.5; }
+  .checkbox-row span strong { color: var(--gold); }
+
+  .bk-nav { display: flex; gap: 10px; margin-top: 4px; }
+  .btn-back {
+    padding: 11px 18px; border: 1px solid var(--border); border-radius: 9px;
+    background: none; color: var(--text-dim);
+    font-family: 'DM Sans', sans-serif; font-size: 14px; cursor: pointer;
+    transition: all .2s;
+  }
+  .btn-back:hover { background: var(--card-hover); color: var(--text); }
+
+  .btn-resa {
+    padding: 10px 20px; border: none; border-radius: 9px;
+    background: var(--green); color: #0d1b2a;
+    font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600;
+    cursor: pointer; transition: all .2s; display: flex; align-items: center; gap: 8px;
+  }
+  .btn-resa:hover { background: #27ae60; transform: translateY(-1px); }
+  .btn-resa-outline {
+    flex: 1; padding: 11px; border: 1px solid rgba(46,204,113,.3); border-radius: 9px;
+    background: rgba(46,204,113,.06); color: var(--green);
+    font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600;
+    cursor: pointer; transition: all .2s;
+  }
+  .btn-resa-outline:hover { background: rgba(46,204,113,.12); }
+
+  .success-screen {
+    text-align: center; padding: 16px 0;
+  }
+  .success-circle {
+    width: 64px; height: 64px; border-radius: 50%;
+    background: rgba(46,204,113,.15); border: 2px solid rgba(46,204,113,.4);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 28px; margin: 0 auto 18px;
+    animation: popIn .4s cubic-bezier(.34,1.56,.64,1);
+  }
+  @keyframes popIn {
+    from { transform: scale(0); opacity: 0; }
+    to   { transform: scale(1); opacity: 1; }
+  }
+  .success-screen h3 {
+    font-family: 'Playfair Display', serif; font-size: 20px; color: var(--cream); margin-bottom: 8px;
+  }
+  .success-screen p { font-size: 13.5px; color: var(--text-dim); line-height: 1.6; margin-bottom: 22px; }
+
+  /* new resa button */
+  .btn-new-resa {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 10px 20px; border: none; border-radius: 9px;
+    background: var(--green); color: #0d1b2a;
+    font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600;
+    cursor: pointer; transition: all .2s;
+  }
+  .btn-new-resa:hover { background: #27ae60; transform: translateY(-1px); }
+  .btn-new-resa svg { flex-shrink: 0; }
+
+  /* quota bar */
+  .quota-bar-wrap {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 10px; padding: 14px 18px; margin-bottom: 20px;
+    display: flex; align-items: center; gap: 16px;
+  }
+  .quota-label { font-size: 12.5px; color: var(--text-dim); flex: 1; }
+  .quota-label strong { color: var(--cream); font-size: 14px; }
+  .quota-track {
+    width: 100px; height: 6px; border-radius: 3px;
+    background: rgba(255,255,255,.08); overflow: hidden;
+  }
+  .quota-fill {
+    height: 100%; border-radius: 3px; background: var(--green);
+    transition: width .5s ease;
+  }
+  .quota-fill.warn { background: var(--gold); }
+</style>
+</head>
+<body>
+
+<!-- TOP NAV -->
+<header class="topnav">
+  <div class="brand">
+    <span class="brand-dot"></span>
+    SpaceBook <span style="font-size:12px;color:var(--text-dim);font-family:'DM Sans',sans-serif;font-weight:300;margin-left:4px;">— Sorbonne Paris Nord</span>
+  </div>
+  <nav>
+    <button class="active" onclick="switchTab('accueil',this)">Accueil</button>
+    <button onclick="switchTab('reservations',this)">Mes réservations</button>
+    <button onclick="switchTab('aide',this)">Aide</button>
+    <div class="avatar" title="Mon profil" onclick="showToast('👤 Profil ouvert')">AS</div>
+    <button class="btn-deconnect" onclick="showToast('👋 Déconnecté avec succès')">Déconnexion</button>
+  </nav>
+</header>
+
+<div class="layout">
+  <!-- SIDEBAR FILTERS -->
+  <aside class="sidebar">
+    <h3>Bâtiment</h3>
+    <div class="filter-group">
+      <button class="filter-btn sel" onclick="toggleFilter(this,'bat')"><span class="dot"></span>Tous</button>
+      <button class="filter-btn" onclick="toggleFilter(this,'bat')"><span class="dot"></span>Bâtiment A</button>
+      <button class="filter-btn" onclick="toggleFilter(this,'bat')"><span class="dot"></span>Bâtiment B</button>
+      <button class="filter-btn" onclick="toggleFilter(this,'bat')"><span class="dot"></span>IUT Villetaneuse</button>
+      <button class="filter-btn" onclick="toggleFilter(this,'bat')"><span class="dot"></span>Institut Galilée</button>
+    </div>
+
+    <h3>Type de salle</h3>
+    <div class="filter-group">
+      <button class="filter-btn sel" onclick="toggleFilter(this,'type')"><span class="dot"></span>Tous</button>
+      <button class="filter-btn" onclick="toggleFilter(this,'type')"><span class="dot"></span>Salle TD</button>
+      <button class="filter-btn" onclick="toggleFilter(this,'type')"><span class="dot"></span>Salle informatique</button>
+      <button class="filter-btn" onclick="toggleFilter(this,'type')"><span class="dot"></span>Amphithéâtre</button>
+      <button class="filter-btn" onclick="toggleFilter(this,'type')"><span class="dot"></span>Travail en groupe</button>
+    </div>
+
+    <h3>Capacité</h3>
+    <div class="range-wrap">
+      <label>Min. places <span id="capVal">10</span></label>
+      <input type="range" min="2" max="100" value="10" oninput="document.getElementById('capVal').textContent=this.value">
+    </div>
+
+    <h3>Équipements</h3>
+    <div class="equip-list">
+      <label class="equip-item">
+        <input type="checkbox" checked> Vidéoprojecteur
+      </label>
+      <label class="equip-item">
+        <input type="checkbox"> Tableau interactif
+      </label>
+      <label class="equip-item">
+        <input type="checkbox"> Système audio
+      </label>
+      <label class="equip-item">
+        <input type="checkbox"> Prise HDMI
+      </label>
+      <label class="equip-item">
+        <input type="checkbox"> Postes PC
+      </label>
+      <label class="equip-item">
+        <input type="checkbox"> Accès PMR
+      </label>
+      <label class="equip-item">
+        <input type="checkbox"> Climatisation
+      </label>
+    </div>
+
+    <h3>Disponibilité</h3>
+    <div class="filter-group">
+      <button class="filter-btn sel" onclick="toggleFilter(this,'dispo')"><span class="dot"></span>Toutes</button>
+      <button class="filter-btn" onclick="toggleFilter(this,'dispo')"><span class="dot"></span>Libres seulement</button>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main">
+
+    <!-- PAGE ACCUEIL -->
+    <section class="page-section active" id="page-accueil">
+      <!-- VIEW BAR -->
+      <div class="view-bar">
+        <h1>Planning <small id="cal-label">mars 2026</small></h1>
+        <div class="toggle-wrap">
+          <button class="on" id="btn-month" onclick="switchView('month')">Mois</button>
+          <button id="btn-week" onclick="switchView('week')">Semaine</button>
+        </div>
+      </div>
+
+      <!-- LÉGENDE -->
+      <div class="legend">
+        <div class="leg-item"><div class="leg-dot" style="background:var(--green)"></div> Disponible</div>
+        <div class="leg-item"><div class="leg-dot" style="background:var(--red)"></div> Occupée</div>
+        <div class="leg-item"><div class="leg-dot" style="background:var(--grey)"></div> Maintenance / Travaux</div>
+        <div style="margin-left:auto;font-size:12px;color:var(--text-dim)">Cliquer sur un créneau vert pour réserver</div>
+      </div>
+
+      <!-- CALENDAR SECTION -->
+      <div class="calendar-section">
+        <div class="cal-header">
+          <button class="cal-nav" onclick="navCal(-1)">&#8592;</button>
+          <div class="cal-title" id="cal-month-label">Mars 2026</div>
+          <button class="cal-nav" onclick="navCal(1)">&#8594;</button>
+          <button class="cal-today-btn" onclick="goToday()">Aujourd'hui</button>
+        </div>
+        <div id="cal-month" class="calendar-section"></div>
+        <div id="cal-week" class="calendar-section" style="display:none"></div>
+      </div>
+
+      <!-- ÉTAT DES SALLES -->
+      <div class="section-title">
+        État des salles
+        <span>Vue en temps réel · <span style="color:var(--green)">14 libres</span> · <span style="color:var(--red)">8 occupées</span> · <span style="color:var(--grey)">3 maintenance</span></span>
+      </div>
+
+      <!-- BÂTIMENT A -->
+      <div class="building-block">
+        <div class="building-label">Bâtiment A — Sciences humaines</div>
+        <div class="rooms-grid" id="rooms-grid-a"></div>
+      </div>
+
+      <!-- BÂTIMENT B -->
+      <div class="building-block">
+        <div class="building-label">Bâtiment B — Droit & Économie</div>
+        <div class="rooms-grid" id="rooms-grid-b"></div>
+      </div>
+
+      <!-- IUT -->
+      <div class="building-block">
+        <div class="building-label">IUT Villetaneuse</div>
+        <div class="rooms-grid" id="rooms-grid-iut"></div>
+      </div>
+    </section>
+
+    <!-- PAGE MES RÉSERVATIONS -->
+    <section class="page-section" id="page-reservations">
+      <div class="view-bar" style="margin-bottom:20px">
+        <h1>Mes réservations</h1>
+        <button class="btn-new-resa" onclick="openBookingModal()">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Réserver une salle
+        </button>
+      </div>
+
+      <!-- QUOTA -->
+      <div class="quota-bar-wrap">
+        <div>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-dim)" stroke-width="2" style="margin-bottom:-3px;margin-right:6px"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        </div>
+        <div class="quota-label">Quota hebdomadaire <strong>3 / 5</strong> réservations utilisées</div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <div class="quota-track"><div class="quota-fill warn" style="width:60%"></div></div>
+          <span style="font-size:11.5px;color:var(--gold);font-weight:600">60%</span>
+        </div>
+      </div>
+
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;" id="resa-table-wrap">
+        <table class="resa-table">
+          <thead>
+            <tr>
+              <th>Salle</th>
+              <th>Date</th>
+              <th>Horaire</th>
+              <th>Motif</th>
+              <th>Statut</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>A-204</strong> — Bât. A</td>
+              <td>Mar. 25 mars 2026</td>
+              <td>10h00 – 12h00</td>
+              <td>Travail de groupe</td>
+              <td><span class="resa-row-status badge-green">✓ Confirmée</span></td>
+              <td><button class="annuler-btn" onclick="showToast('❌ Réservation annulée')">Annuler</button></td>
+            </tr>
+            <tr>
+              <td><strong>B-105</strong> — Bât. B</td>
+              <td>Jeu. 27 mars 2026</td>
+              <td>14h00 – 16h00</td>
+              <td>Projet tutoré</td>
+              <td><span class="resa-row-status badge-green">✓ Confirmée</span></td>
+              <td><button class="annuler-btn" onclick="showToast('❌ Réservation annulée')">Annuler</button></td>
+            </tr>
+            <tr>
+              <td><strong>IUT-B102</strong> — IUT</td>
+              <td>Lun. 30 mars 2026</td>
+              <td>09h00 – 11h00</td>
+              <td>Révision examen</td>
+              <td><span class="resa-row-status badge-green">✓ Confirmée</span></td>
+              <td><button class="annuler-btn" onclick="showToast('❌ Réservation annulée')">Annuler</button></td>
+            </tr>
+            <tr style="opacity:.5">
+              <td><strong>A-110</strong> — Bât. A</td>
+              <td>Lun. 17 mars 2026</td>
+              <td>13h00 – 15h00</td>
+              <td>Travail de groupe</td>
+              <td><span class="resa-row-status badge-grey">Passée</span></td>
+              <td></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- PAGE AIDE -->
+    <section class="page-section" id="page-aide">
+      <div class="view-bar" style="margin-bottom:24px"><h1>Centre d'aide</h1></div>
+      <div class="aide-grid">
+        <div class="aide-card">
+          <div class="aide-icon">📅</div>
+          <h3>Comment réserver une salle ?</h3>
+          <p>Depuis le calendrier, cliquez sur un créneau vert (disponible). Renseignez le motif, le nombre de participants et confirmez. Une notification de confirmation vous sera envoyée.</p>
+        </div>
+        <div class="aide-card">
+          <div class="aide-icon">🔍</div>
+          <h3>Filtrer les salles</h3>
+          <p>Utilisez le panneau de gauche pour filtrer par bâtiment, type de salle, capacité ou équipements disponibles (vidéoprojecteur, HDMI, etc.).</p>
+        </div>
+        <div class="aide-card">
+          <div class="aide-icon">🚫</div>
+          <h3>Annuler une réservation</h3>
+          <p>Rendez-vous dans "Mes réservations" et cliquez sur "Annuler". Attention : l'annulation doit être effectuée avant le délai limite fixé par l'administration.</p>
+        </div>
+        <div class="aide-card">
+          <div class="aide-icon">🔴</div>
+          <h3>Code couleur</h3>
+          <p><strong style="color:var(--green)">Vert</strong> = disponible. <strong style="color:var(--red)">Rouge</strong> = occupée. <strong style="color:var(--grey)">Gris</strong> = indisponible (maintenance ou travaux).</p>
+        </div>
+        <div class="aide-card">
+          <div class="aide-icon">⚠️</div>
+          <h3>Signaler un problème</h3>
+          <p>Depuis la fiche d'une salle, cliquez sur "Signaler un problème" pour informer le service technique d'une panne ou d'un dysfonctionnement.</p>
+        </div>
+        <div class="aide-card">
+          <div class="aide-icon">📊</div>
+          <h3>Quotas de réservation</h3>
+          <p>Chaque utilisateur est soumis à un nombre maximal de réservations par semaine, défini par l'administration. Consultez votre espace profil pour voir votre solde.</p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- BOOKING MODAL -->
+<div class="modal-overlay" id="booking-modal" onclick="closeBookingModal(event)">
+  <div class="bk-modal">
+    <button class="modal-close" onclick="document.getElementById('booking-modal').classList.remove('open')">✕</button>
+    <h2 style="font-family:'Playfair Display',serif;font-size:20px;color:var(--cream);margin-bottom:4px;">Nouvelle réservation</h2>
+    <div style="font-size:13px;color:var(--text-dim);margin-bottom:22px;">Sorbonne Paris Nord — Année 2025–2026</div>
+
+    <!-- STEPS -->
+    <div class="bk-steps">
+      <div class="bk-step active" id="bk-s1"><span class="bk-step-num">1</span>Salle</div>
+      <div class="bk-step" id="bk-s2"><span class="bk-step-num">2</span>Créneau</div>
+      <div class="bk-step" id="bk-s3"><span class="bk-step-num">3</span>Détails</div>
+      <div class="bk-step" id="bk-s4"><span class="bk-step-num">4</span>Confirmer</div>
+    </div>
+
+    <!-- PANE 1 — Choisir la salle -->
+    <div class="bk-pane active" id="bk-pane1">
+      <div class="form-row">
+        <label>Bâtiment</label>
+        <select class="form-select" id="bk-bat" onchange="updateRooms()">
+          <option value="">— Sélectionner un bâtiment —</option>
+          <option value="A">Bâtiment A — Sciences humaines</option>
+          <option value="B">Bâtiment B — Droit &amp; Économie</option>
+          <option value="IUT">IUT Villetaneuse</option>
+          <option value="Galilee">Institut Galilée</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <label>Numéro de salle</label>
+        <select class="form-select" id="bk-room" onchange="updateRoomPreview()" disabled>
+          <option value="">— Choisir d'abord un bâtiment —</option>
+        </select>
+      </div>
+      <div id="bk-room-preview" style="display:none;background:rgba(46,204,113,.06);border:1px solid rgba(46,204,113,.2);border-radius:10px;padding:14px 16px;margin-bottom:6px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+          <span style="font-size:14px;font-weight:600;color:var(--cream)" id="prev-name">A-204</span>
+          <span class="room-badge badge-green" id="prev-badge">Disponible</span>
+        </div>
+        <div style="display:flex;gap:20px;font-size:12.5px;color:var(--text-dim);">
+          <span id="prev-cap">— places</span>
+          <span id="prev-type">—</span>
+          <span id="prev-floor">—</span>
+        </div>
+        <div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:5px;" id="prev-equip"></div>
+      </div>
+      <div class="bk-nav">
+        <button class="btn-back" onclick="document.getElementById('booking-modal').classList.remove('open')">Annuler</button>
+        <button class="btn-resa" style="flex:1;justify-content:center" onclick="bkNext(2)" id="bk-btn1" disabled>Suivant →</button>
+      </div>
+    </div>
+
+    <!-- PANE 2 — Créneau -->
+    <div class="bk-pane" id="bk-pane2">
+      <div class="form-row">
+        <label>Date</label>
+        <input type="date" class="form-input" id="bk-date" min="2026-03-24" value="2026-03-25" onchange="updateSlots()">
+      </div>
+      <div class="time-row form-row">
+        <div>
+          <label>Heure de début</label>
+          <select class="form-select" id="bk-start" onchange="updateSlots()">
+            <option>08h00</option><option>09h00</option><option selected>10h00</option>
+            <option>11h00</option><option>12h00</option><option>13h00</option>
+            <option>14h00</option><option>15h00</option><option>16h00</option><option>17h00</option>
+          </select>
+        </div>
+        <div>
+          <label>Heure de fin</label>
+          <select class="form-select" id="bk-end">
+            <option>10h00</option><option selected>12h00</option><option>13h00</option>
+            <option>14h00</option><option>15h00</option><option>16h00</option>
+            <option>17h00</option><option>18h00</option><option>19h00</option>
+          </select>
+        </div>
+      </div>
+      <div style="font-size:11.5px;color:var(--text-dim);margin-bottom:10px;">Créneaux disponibles pour cette salle ce jour-là :</div>
+      <div class="avail-preview" id="bk-slots">
+        <div class="avail-row selected" onclick="selectSlot(this,'10h00 – 12h00')">
+          <div><div style="font-size:13px;font-weight:500;color:var(--cream)">10h00 – 12h00</div><div class="avail-slot">2h · Disponible</div></div>
+          <div class="avail-dot" style="background:var(--green)"></div>
+        </div>
+        <div class="avail-row" onclick="selectSlot(this,'13h00 – 15h00')">
+          <div><div style="font-size:13px;font-weight:500;color:var(--cream)">13h00 – 15h00</div><div class="avail-slot">2h · Disponible</div></div>
+          <div class="avail-dot" style="background:var(--green)"></div>
+        </div>
+        <div class="avail-row" onclick="selectSlot(this,'15h00 – 17h00')">
+          <div><div style="font-size:13px;font-weight:500;color:var(--cream)">15h00 – 17h00</div><div class="avail-slot">2h · Disponible</div></div>
+          <div class="avail-dot" style="background:var(--green)"></div>
+        </div>
+        <div class="avail-row" style="opacity:.45;cursor:default;">
+          <div><div style="font-size:13px;font-weight:500;color:var(--grey)">17h00 – 19h00</div><div class="avail-slot">Cours planifié</div></div>
+          <div class="avail-dot" style="background:var(--red)"></div>
+        </div>
+      </div>
+      <div class="bk-nav" style="margin-top:18px;">
+        <button class="btn-back" onclick="bkBack(1)">← Retour</button>
+        <button class="btn-resa" style="flex:1;justify-content:center" onclick="bkNext(3)">Suivant →</button>
+      </div>
+    </div>
+
+    <!-- PANE 3 — Détails -->
+    <div class="bk-pane" id="bk-pane3">
+      <div class="form-row">
+        <label>Motif de la réservation</label>
+        <select class="form-select" id="bk-motif">
+          <option>Travail de groupe</option>
+          <option>Projet tutoré</option>
+          <option>Révision / préparation examen</option>
+          <option>Répétition orale / soutenance</option>
+          <option>Réunion associative</option>
+          <option>Autre (préciser)</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <label>Nombre de participants</label>
+        <input type="number" class="form-input" id="bk-people" min="1" max="150" value="4" placeholder="ex. 4">
+      </div>
+      <div class="form-row">
+        <label>Commentaire (facultatif)</label>
+        <input type="text" class="form-input" id="bk-comment" placeholder="Ex : besoin du vidéoprojecteur allumé...">
+      </div>
+
+      <!-- AVERTISSEMENT ANTI-ABUS -->
+      <div class="bk-warning">
+        <div class="bk-warning-icon">⚠️</div>
+        <p>
+          <strong>Politique d'utilisation responsable</strong><br>
+          Toute réservation non honorée (absence sans annulation préalable), annulation répétée à la dernière minute, ou réservation fictive est enregistrée dans votre historique. <strong>Un comportement abusif peut entraîner des restrictions temporaires ou permanentes de votre accès à la plateforme.</strong> En confirmant, vous vous engagez à occuper la salle à l'heure indiquée ou à l'annuler au moins 2h avant le début du créneau.
+        </p>
+      </div>
+
+      <div class="bk-nav">
+        <button class="btn-back" onclick="bkBack(2)">← Retour</button>
+        <button class="btn-resa" style="flex:1;justify-content:center" onclick="bkNext(4)">Vérifier →</button>
+      </div>
+    </div>
+
+    <!-- PANE 4 — Confirmation -->
+    <div class="bk-pane" id="bk-pane4">
+      <div style="font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-dim);margin-bottom:10px;">Récapitulatif</div>
+      <div class="bk-summary">
+        <div class="bk-summary-row"><span>Bâtiment</span><span id="sum-bat">—</span></div>
+        <div class="bk-summary-row"><span>Salle</span><span id="sum-room">—</span></div>
+        <div class="bk-summary-row"><span>Date</span><span id="sum-date">—</span></div>
+        <div class="bk-summary-row"><span>Horaire</span><span id="sum-time">—</span></div>
+        <div class="bk-summary-row"><span>Motif</span><span id="sum-motif">—</span></div>
+        <div class="bk-summary-row"><span>Participants</span><span id="sum-people">—</span></div>
+      </div>
+
+      <label class="checkbox-row">
+        <input type="checkbox" id="bk-accept" onchange="document.getElementById('bk-confirm-btn').disabled=!this.checked">
+        <span>J'ai lu et j'accepte la <strong>politique d'utilisation responsable</strong>. Je m'engage à être présent·e à l'heure ou à annuler ma réservation au moins 2h à l'avance. Je comprends qu'un usage abusif peut entraîner des restrictions d'accès.</span>
+      </label>
+
+      <div class="bk-nav">
+        <button class="btn-back" onclick="bkBack(3)">← Retour</button>
+        <button class="btn-resa-outline" id="bk-confirm-btn" disabled onclick="confirmBooking()">✓ Confirmer la réservation</button>
+      </div>
+    </div>
+
+    <!-- PANE SUCCESS -->
+    <div class="bk-pane" id="bk-pane5">
+      <div class="success-screen">
+        <div class="success-circle">✓</div>
+        <h3>Réservation confirmée !</h3>
+        <p>Votre réservation a bien été enregistrée.<br>Un e-mail de confirmation vous a été envoyé.<br>Vous recevrez un rappel la veille du créneau.</p>
+        <div class="bk-summary" style="text-align:left;margin-bottom:20px;">
+          <div class="bk-summary-row"><span>Salle</span><span id="suc-room">—</span></div>
+          <div class="bk-summary-row"><span>Date &amp; Horaire</span><span id="suc-time">—</span></div>
+          <div class="bk-summary-row"><span>Motif</span><span id="suc-motif">—</span></div>
+        </div>
+        <button class="btn-resa" style="margin:0 auto" onclick="document.getElementById('booking-modal').classList.remove('open')">Fermer</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ROOM MODAL -->
+<div class="modal-overlay" id="modal" onclick="closeModal(event)">
+  <div class="modal">
+    <button class="modal-close" onclick="document.getElementById('modal').classList.remove('open')">✕</button>
+    <h2 id="m-name">Salle A-204</h2>
+    <div class="modal-sub" id="m-loc">Bâtiment A — 2e étage</div>
+    <div class="modal-status-bar" id="m-status-bar">
+      <span id="m-status-icon">●</span> <span id="m-status-text">Disponible</span>
+    </div>
+    <div class="modal-info-grid">
+      <div class="modal-info-item"><label>Capacité</label><p id="m-cap">— places</p></div>
+      <div class="modal-info-item"><label>Type</label><p id="m-type">—</p></div>
+      <div class="modal-info-item"><label>Bâtiment</label><p id="m-bat">—</p></div>
+      <div class="modal-info-item"><label>Statut</label><p id="m-stat2">—</p></div>
+    </div>
+    <div style="font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-dim);margin-bottom:8px;">Équipements</div>
+    <div class="modal-equip-list" id="m-equip"></div>
+    <div class="modal-btn-row">
+      <button class="btn-primary" id="m-reserve-btn" onclick="reserveRoom()">Réserver ce créneau</button>
+      <button class="btn-secondary" onclick="signalRoom()">⚠ Signaler</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <span id="toast-msg">✓ Réservation confirmée !</span>
+</div>
+
+<script>
+// ─── DATA ───
+const rooms = {
+  a: [
+    { id:'A-101', name:'A-101', floor:'1er étage', type:'Salle TD', cap:30, status:'green', label:'Disponible', equip:['Vidéoprojecteur','Tableau blanc','Prises USB'], next:'Libre jusqu\'à 18h' },
+    { id:'A-204', name:'A-204', floor:'2e étage', type:'Salle TD', cap:25, status:'green', label:'Disponible', equip:['Vidéoprojecteur','HDMI','Climatisation'], next:'Libre jusqu\'à 16h' },
+    { id:'A-305', name:'A-305', floor:'3e étage', type:'Salle informatique', cap:20, status:'red', label:'Occupée', equip:['Postes PC ×20','Vidéoprojecteur','Réseau filaire'], next:'Cours Data Mining · 14h–16h' },
+    { id:'A-110', name:'A-110', floor:'1er étage', type:'Travail de groupe', cap:8, status:'green', label:'Disponible', equip:['Tableau blanc','Prises multiples'], next:'Libre toute la journée' },
+    { id:'A-220', name:'A-220', floor:'2e étage', type:'Amphithéâtre', cap:120, status:'red', label:'Occupée', equip:['Micro sans fil','Vidéoprojecteur ×2','Système audio'], next:'Conférence · 10h–12h' },
+    { id:'A-032', name:'A-032 (Sous-sol)', floor:'Sous-sol', type:'Salle TD', cap:15, status:'grey', label:'Maintenance', equip:['Vidéoprojecteur'], next:'Travaux électriques · jusqu\'au 28/03' },
+  ],
+  b: [
+    { id:'B-105', name:'B-105', floor:'1er étage', type:'Salle TD', cap:40, status:'green', label:'Disponible', equip:['Vidéoprojecteur','HDMI','Tableau interactif'], next:'Libre jusqu\'à 17h' },
+    { id:'B-201', name:'B-201', floor:'2e étage', type:'Salle TD', cap:35, status:'red', label:'Occupée', equip:['Vidéoprojecteur','Tableau blanc'], next:'TD Droit fiscal · 10h30–12h30' },
+    { id:'B-302', name:'B-302', floor:'3e étage', type:'Travail de groupe', cap:10, status:'green', label:'Disponible', equip:['Écran 55"','Prises multiples','Wi-Fi renforcé'], next:'Libre toute la journée' },
+    { id:'B-400', name:'B-400', floor:'4e étage', type:'Amphithéâtre', cap:80, status:'grey', label:'Travaux', equip:['Micro sans fil','Vidéoprojecteur'], next:'Rénovation acoustique · 1–31 mars' },
+  ],
+  iut: [
+    { id:'IUT-B102', name:'IUT-B102', floor:'1er étage', type:'Salle TD', cap:28, status:'green', label:'Disponible', equip:['Vidéoprojecteur','HDMI','Tableau blanc'], next:'Libre jusqu\'à 15h' },
+    { id:'IUT-Info01', name:'IUT-Info01', floor:'RDC', type:'Salle informatique', cap:24, status:'red', label:'Occupée', equip:['Postes PC ×24','Vidéoprojecteur','Linux/Windows'], next:'TP Réseaux · 9h–11h' },
+    { id:'IUT-Info02', name:'IUT-Info02', floor:'RDC', type:'Salle informatique', cap:24, status:'green', label:'Disponible', equip:['Postes PC ×24','Vidéoprojecteur','Linux/Windows'], next:'Libre jusqu\'à 14h' },
+    { id:'IUT-Amphi', name:'IUT-Amphi A', floor:'RDC', type:'Amphithéâtre', cap:150, status:'green', label:'Disponible', equip:['Micro sans fil','Vidéoprojecteur ×3','Livestream'], next:'Libre jusqu\'à 18h' },
+    { id:'IUT-GRP1', name:'IUT-GRP1', floor:'2e étage', type:'Travail de groupe', cap:6, status:'grey', label:'Maintenance', equip:['Tableau blanc','Prises'], next:'Maintenance climatisation' },
+  ]
+};
+
+function renderRoomCard(r) {
+  const statusClass = { green:'status-green', red:'status-red', grey:'status-grey' }[r.status];
+  const badgeClass  = { green:'badge-green', red:'badge-red', grey:'badge-grey' }[r.status];
+  const label = { green:'Disponible', red:'Occupée', grey:'Indisponible' }[r.status];
+  const footerClass = r.status==='green' ? 'room-footer free' : 'room-footer';
+  return `<div class="room-card ${statusClass}" onclick='openRoom(${JSON.stringify(r).replace(/'/g,"\\'")})'> 
+    <div class="room-head">
+      <div class="room-name">${r.name}</div>
+      <div class="room-badge ${badgeClass}">${label}</div>
+    </div>
+    <div class="room-meta">
+      <div class="room-meta-row">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+        ${r.cap} places · ${r.type}
+      </div>
+      <div class="room-meta-row">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+        ${r.floor}
+      </div>
+    </div>
+    <div class="room-equip">${r.equip.slice(0,3).map(e=>`<span class="equip-tag">${e}</span>`).join('')}${r.equip.length>3?`<span class="equip-tag">+${r.equip.length-3}</span>`:''}</div>
+    <div class="${footerClass}"><strong>${r.next}</strong></div>
+  </div>`;
+}
+
+function renderAllRooms() {
+  document.getElementById('rooms-grid-a').innerHTML = rooms.a.map(renderRoomCard).join('');
+  document.getElementById('rooms-grid-b').innerHTML = rooms.b.map(renderRoomCard).join('');
+  document.getElementById('rooms-grid-iut').innerHTML = rooms.iut.map(renderRoomCard).join('');
+}
+renderAllRooms();
+
+// ─── MODAL ───
+let currentRoom = null;
+function openRoom(r) {
+  currentRoom = r;
+  document.getElementById('m-name').textContent = r.name;
+  document.getElementById('m-loc').textContent = r.floor;
+  document.getElementById('m-cap').textContent = r.cap + ' places';
+  document.getElementById('m-type').textContent = r.type;
+  document.getElementById('m-bat').textContent = r.id.startsWith('IUT') ? 'IUT Villetaneuse' : (r.id.startsWith('B') ? 'Bâtiment B' : 'Bâtiment A');
+  document.getElementById('m-stat2').textContent = r.label;
+  document.getElementById('m-equip').innerHTML = r.equip.map(e=>`<span class="modal-equip-tag">${e}</span>`).join('');
+
+  const sb = document.getElementById('m-status-bar');
+  sb.className = 'modal-status-bar ' + r.status;
+  const icons = {green:'● Disponible — Réservable maintenant', red:'● Occupée — '+r.next, grey:'● Indisponible — '+r.next};
+  document.getElementById('m-status-icon').textContent = '';
+  document.getElementById('m-status-text').textContent = icons[r.status];
+
+  const btn = document.getElementById('m-reserve-btn');
+  btn.disabled = r.status !== 'green';
+  btn.textContent = r.status === 'green' ? 'Réserver ce créneau' : (r.status === 'red' ? 'Salle occupée' : 'Salle indisponible');
+
+  document.getElementById('modal').classList.add('open');
+}
+function closeModal(e) {
+  if (e.target === document.getElementById('modal')) document.getElementById('modal').classList.remove('open');
+}
+function reserveRoom() {
+  document.getElementById('modal').classList.remove('open');
+  showToast('✓ Réservation confirmée ! Un e-mail vous a été envoyé.');
+}
+function signalRoom() {
+  document.getElementById('modal').classList.remove('open');
+  showToast('⚠ Signalement transmis au service technique.');
+}
+
+// ─── TOAST ───
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  document.getElementById('toast-msg').textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 3200);
+}
+
+// ─── TAB ───
+function switchTab(tab, btn) {
+  document.querySelectorAll('.page-section').forEach(s=>s.classList.remove('active'));
+  document.getElementById('page-'+tab).classList.add('active');
+  document.querySelectorAll('.topnav nav button:not(.btn-deconnect)').forEach(b=>b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+}
+
+// ─── FILTER ───
+function toggleFilter(btn, group) {
+  btn.closest('.filter-group').querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('sel'));
+  btn.classList.add('sel');
+}
+
+// ─── CALENDAR ───
+let viewMode = 'month';
+let currentDate = new Date(2026, 2, 24); // 24 mars 2026
+
+const months = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
+const days   = ['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'];
+
+const sampleEvents = {
+  // format: 'YYYY-M-D': [{label, cls}]
+  '2026-2-23': [{label:'Info01 · Cours',cls:'red'},{label:'B-201 · Libre',cls:'green'}],
+  '2026-2-24': [{label:'2 salles libres',cls:'green'},{label:'Amphi A · Conférence',cls:'red'}],
+  '2026-2-25': [{label:'A-305 · TP',cls:'red'},{label:'IUT-Info02 · Libre',cls:'green'}],
+  '2026-2-27': [{label:'3 salles libres',cls:'green'}],
+  '2026-2-28': [{label:'Maintenance A-032',cls:'grey'},{label:'B-105 · Libre',cls:'green'}],
+  '2026-2-30': [{label:'2 salles libres',cls:'green'}],
+  '2026-2-31': [{label:'A-220 · Event',cls:'red'}],
+  '2026-3-2':  [{label:'IUT-B102 · Libre',cls:'green'}],
+  '2026-3-5':  [{label:'B-400 · Travaux',cls:'grey'},{label:'A-204 · Libre',cls:'green'}],
+};
+
+function getKey(y,m,d){ return `${y}-${m}-${d}`; }
+
+function renderMonth() {
+  const y = currentDate.getFullYear(), m = currentDate.getMonth();
+  document.getElementById('cal-month-label').textContent = months[m]+' '+y;
+  document.getElementById('cal-label').textContent = months[m].toLowerCase()+' '+y;
+
+  const first = new Date(y,m,1);
+  let startDay = first.getDay(); // 0=Sun
+  startDay = (startDay===0)?6:startDay-1; // Mon-based
+  const daysInMonth = new Date(y,m+1,0).getDate();
+  const prevDays = new Date(y,m,0).getDate();
+  const today = new Date();
+
+  let html = '<div class="month-grid">';
+  days.forEach(d=>{ html+=`<div class="month-dayname">${d}</div>`; });
+
+  let totalCells = Math.ceil((startDay+daysInMonth)/7)*7;
+  for(let i=0;i<totalCells;i++){
+    let dayNum, monthOffset=0;
+    if(i<startDay){ dayNum=prevDays-startDay+i+1; monthOffset=-1; }
+    else if(i>=startDay+daysInMonth){ dayNum=i-startDay-daysInMonth+1; monthOffset=1; }
+    else { dayNum=i-startDay+1; }
+
+    const isOther = monthOffset!==0;
+    const isToday = !isOther && dayNum===today.getDate() && m===today.getMonth() && y===today.getFullYear();
+    const key = getKey(y, m, dayNum);
+    const evs = sampleEvents[key] || [];
+    const evHTML = evs.map(e=>`<div class="cell-ev ${e.cls}">${e.label}</div>`).join('');
+    const classes = ['month-cell', isOther?'other-month':'', isToday?'today':''].filter(Boolean).join(' ');
+    html+=`<div class="${classes}" onclick="onDayClick(${y},${m},${dayNum})"><div class="cell-num">${dayNum}</div><div class="cell-events">${evHTML}</div></div>`;
+  }
+  html+='</div>';
+  document.getElementById('cal-month').innerHTML = html;
+}
+
+function renderWeek() {
+  const y = currentDate.getFullYear(), m = currentDate.getMonth();
+  const d = currentDate.getDate();
+  // Find Monday of this week
+  const temp = new Date(y,m,d);
+  const dow = temp.getDay(); const diff = (dow===0)?-6:1-dow;
+  const monday = new Date(temp); monday.setDate(temp.getDate()+diff);
+
+  const weekDays = [];
+  for(let i=0;i<7;i++){
+    const dd = new Date(monday); dd.setDate(monday.getDate()+i);
+    weekDays.push(dd);
+  }
+
+  const label = `${monday.getDate()} – ${weekDays[6].getDate()} ${months[weekDays[6].getMonth()]} ${y}`;
+  document.getElementById('cal-month-label').textContent = label;
+  document.getElementById('cal-label').textContent = label.toLowerCase();
+
+  const today = new Date();
+  const hours = ['08h','09h','10h','11h','12h','13h','14h','15h','16h','17h','18h','19h'];
+
+  // Some sample week events: [dayIndex, hourIndex, label, cls, height]
+  const wEvents = [
+    {d:1,h:2,label:'A-305 · Data Mining',cls:'red',rows:2},
+    {d:0,h:4,label:'B-201 · TD Droit',cls:'red',rows:2},
+    {d:2,h:1,label:'IUT · TP Réseaux',cls:'red',rows:2},
+    {d:3,h:5,label:'A-204 · Groupe',cls:'green',rows:2},
+    {d:4,h:3,label:'A-220 · Conférence',cls:'red',rows:3},
+    {d:1,h:7,label:'IUT-B102 · Libre',cls:'green',rows:2},
+    {d:6,h:9,label:'A-032 · Maintenance',cls:'grey',rows:3},
+  ];
+
+  let html = '<div class="week-grid"><div class="week-header-row"><div class="week-corner"></div>';
+  weekDays.forEach(dd=>{
+    const isToday = dd.toDateString()===today.toDateString();
+    html+=`<div class="week-day-col"><div class="wdc-name">${days[weekDays.indexOf(dd)]}</div><div class="wdc-num ${isToday?'today-num':''}">${dd.getDate()}</div></div>`;
+  });
+  html+='</div><div class="week-body">';
+  hours.forEach((h,hi)=>{
+    html+=`<div class="week-row"><div class="time-label">${h}</div>`;
+    for(let di=0;di<7;di++){
+      const ev = wEvents.find(e=>e.d===di && e.h===hi);
+      const style = ev ? `style="height:${ev.rows*52-6}px"` : '';
+      const evHtml = ev ? `<div class="week-event ${ev.cls}" ${style}>${ev.label}</div>` : '';
+      html+=`<div class="week-cell" onclick="showToast('📅 Créneau sélectionné')">${evHtml}</div>`;
+    }
+    html+='</div>';
+  });
+  html+='</div></div>';
+  document.getElementById('cal-week').innerHTML = html;
+}
+
+function switchView(v) {
+  viewMode=v;
+  document.getElementById('btn-month').classList.toggle('on',v==='month');
+  document.getElementById('btn-week').classList.toggle('on',v==='week');
+  document.getElementById('cal-month').style.display = v==='month'?'':'none';
+  document.getElementById('cal-week').style.display  = v==='week'?'':'none';
+  if(v==='month') renderMonth(); else renderWeek();
+}
+
+function navCal(dir) {
+  if(viewMode==='month'){
+    currentDate.setMonth(currentDate.getMonth()+dir);
+    renderMonth();
+  } else {
+    currentDate.setDate(currentDate.getDate()+dir*7);
+    renderWeek();
+  }
+}
+function goToday() { currentDate = new Date(2026,2,24); if(viewMode==='month') renderMonth(); else renderWeek(); }
+function onDayClick(y,m,d) { showToast(`📅 ${d} ${months[m]} ${y} — Cliquer sur une salle pour réserver`); }
+
+// INIT
+renderMonth();
+renderWeek();
+document.getElementById('cal-week').style.display='none';
+
+// ─── BOOKING MODAL ───
+const roomsByBat = {
+  A: [
+    { id:'A-101', name:'A-101', floor:'1er étage', type:'Salle TD', cap:30, status:'green', label:'Disponible', equip:['Vidéoprojecteur','Tableau blanc','Prises USB'] },
+    { id:'A-204', name:'A-204', floor:'2e étage', type:'Salle TD', cap:25, status:'green', label:'Disponible', equip:['Vidéoprojecteur','HDMI','Climatisation'] },
+    { id:'A-305', name:'A-305', floor:'3e étage', type:'Salle informatique', cap:20, status:'red', label:'Occupée', equip:['Postes PC ×20','Vidéoprojecteur'] },
+    { id:'A-110', name:'A-110', floor:'1er étage', type:'Travail en groupe', cap:8, status:'green', label:'Disponible', equip:['Tableau blanc','Prises multiples'] },
+    { id:'A-220', name:'A-220', floor:'2e étage', type:'Amphithéâtre', cap:120, status:'red', label:'Occupée', equip:['Micro sans fil','Vidéoprojecteur ×2','Système audio'] },
+    { id:'A-032', name:'A-032 (Sous-sol)', floor:'Sous-sol', type:'Salle TD', cap:15, status:'grey', label:'Indisponible', equip:['Vidéoprojecteur'] },
+  ],
+  B: [
+    { id:'B-105', name:'B-105', floor:'1er étage', type:'Salle TD', cap:40, status:'green', label:'Disponible', equip:['Vidéoprojecteur','HDMI','Tableau interactif'] },
+    { id:'B-201', name:'B-201', floor:'2e étage', type:'Salle TD', cap:35, status:'red', label:'Occupée', equip:['Vidéoprojecteur','Tableau blanc'] },
+    { id:'B-302', name:'B-302', floor:'3e étage', type:'Travail en groupe', cap:10, status:'green', label:'Disponible', equip:['Écran 55"','Prises multiples','Wi-Fi renforcé'] },
+    { id:'B-400', name:'B-400 (Amphi)', floor:'4e étage', type:'Amphithéâtre', cap:80, status:'grey', label:'Indisponible', equip:['Micro sans fil','Vidéoprojecteur'] },
+  ],
+  IUT: [
+    { id:'IUT-B102', name:'IUT-B102', floor:'1er étage', type:'Salle TD', cap:28, status:'green', label:'Disponible', equip:['Vidéoprojecteur','HDMI','Tableau blanc'] },
+    { id:'IUT-Info01', name:'IUT-Info01', floor:'RDC', type:'Salle informatique', cap:24, status:'red', label:'Occupée', equip:['Postes PC ×24','Vidéoprojecteur'] },
+    { id:'IUT-Info02', name:'IUT-Info02', floor:'RDC', type:'Salle informatique', cap:24, status:'green', label:'Disponible', equip:['Postes PC ×24','Vidéoprojecteur'] },
+    { id:'IUT-Amphi', name:'IUT-Amphi A', floor:'RDC', type:'Amphithéâtre', cap:150, status:'green', label:'Disponible', equip:['Micro sans fil','Vidéoprojecteur ×3'] },
+    { id:'IUT-GRP1', name:'IUT-GRP1', floor:'2e étage', type:'Travail en groupe', cap:6, status:'grey', label:'Indisponible', equip:['Tableau blanc'] },
+  ],
+  Galilee: [
+    { id:'G-L001', name:'G-L001', floor:'RDC', type:'Salle TD', cap:30, status:'green', label:'Disponible', equip:['Vidéoprojecteur','Tableau blanc'] },
+    { id:'G-Amphi', name:'G-Amphi B', floor:'RDC', type:'Amphithéâtre', cap:200, status:'green', label:'Disponible', equip:['Micro sans fil','Vidéoprojecteur ×4','Système audio'] },
+    { id:'G-Info', name:'G-Info 01', floor:'1er étage', type:'Salle informatique', cap:30, status:'red', label:'Occupée', equip:['Postes PC ×30','Linux/Windows'] },
+  ]
+};
+
+let bkStep = 1;
+let selectedSlot = '10h00 – 12h00';
+
+function openBookingModal() {
+  bkStep = 1;
+  selectedSlot = '10h00 – 12h00';
+  // reset form
+  document.getElementById('bk-bat').value = '';
+  document.getElementById('bk-room').value = '';
+  document.getElementById('bk-room').disabled = true;
+  document.getElementById('bk-room-preview').style.display = 'none';
+  document.getElementById('bk-btn1').disabled = true;
+  document.getElementById('bk-accept').checked = false;
+  document.getElementById('bk-confirm-btn').disabled = true;
+  // go to pane 1
+  showBkPane(1);
+  document.getElementById('booking-modal').classList.add('open');
+}
+
+function closeBookingModal(e) {
+  if (e.target === document.getElementById('booking-modal'))
+    document.getElementById('booking-modal').classList.remove('open');
+}
+
+function showBkPane(n) {
+  for (let i=1;i<=5;i++) {
+    document.getElementById('bk-pane'+i).classList.toggle('active', i===n);
+    const s = document.getElementById('bk-s'+i);
+    if (!s) continue;
+    s.classList.remove('active','done');
+    if (i < n) s.classList.add('done');
+    else if (i === n) s.classList.add('active');
+  }
+  bkStep = n;
+}
+
+function bkNext(n) {
+  if (n === 4) fillSummary();
+  showBkPane(n);
+}
+function bkBack(n) { showBkPane(n); }
+
+function updateRooms() {
+  const bat = document.getElementById('bk-bat').value;
+  const roomSel = document.getElementById('bk-room');
+  roomSel.innerHTML = '<option value="">— Sélectionner une salle —</option>';
+  document.getElementById('bk-room-preview').style.display = 'none';
+  document.getElementById('bk-btn1').disabled = true;
+  if (!bat) { roomSel.disabled = true; return; }
+  roomSel.disabled = false;
+  (roomsByBat[bat] || []).forEach(r => {
+    const opt = document.createElement('option');
+    opt.value = r.id;
+    const statusLabel = r.status==='green' ? '✓ Disponible' : (r.status==='red' ? '● Occupée' : '✕ Indisponible');
+    opt.textContent = `${r.name} — ${r.type} (${r.cap} pl.) · ${statusLabel}`;
+    if (r.status !== 'green') opt.style.color = 'var(--text-dim)';
+    roomSel.appendChild(opt);
+  });
+}
+
+function updateRoomPreview() {
+  const bat = document.getElementById('bk-bat').value;
+  const id = document.getElementById('bk-room').value;
+  if (!id || !bat) { document.getElementById('bk-room-preview').style.display='none'; document.getElementById('bk-btn1').disabled=true; return; }
+  const r = (roomsByBat[bat]||[]).find(x=>x.id===id);
+  if (!r) return;
+  document.getElementById('bk-room-preview').style.display = 'block';
+  document.getElementById('prev-name').textContent = r.name;
+  document.getElementById('prev-cap').textContent = r.cap + ' places';
+  document.getElementById('prev-type').textContent = r.type;
+  document.getElementById('prev-floor').textContent = r.floor;
+  const badge = document.getElementById('prev-badge');
+  badge.textContent = r.label;
+  badge.className = 'room-badge ' + (r.status==='green'?'badge-green':r.status==='red'?'badge-red':'badge-grey');
+  document.getElementById('prev-equip').innerHTML = r.equip.map(e=>`<span class="equip-tag">${e}</span>`).join('');
+  document.getElementById('bk-btn1').disabled = (r.status !== 'green');
+  if (r.status !== 'green') {
+    document.getElementById('bk-room-preview').style.background = r.status==='red' ? 'rgba(231,76,60,.06)' : 'rgba(149,165,166,.06)';
+    document.getElementById('bk-room-preview').style.borderColor = r.status==='red' ? 'rgba(231,76,60,.2)' : 'rgba(149,165,166,.2)';
+  } else {
+    document.getElementById('bk-room-preview').style.background = 'rgba(46,204,113,.06)';
+    document.getElementById('bk-room-preview').style.borderColor = 'rgba(46,204,113,.2)';
+  }
+}
+
+function selectSlot(el, slot) {
+  document.querySelectorAll('#bk-slots .avail-row').forEach(r=>r.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedSlot = slot;
+}
+
+function fillSummary() {
+  const bat = document.getElementById('bk-bat');
+  const room = document.getElementById('bk-room');
+  const date = document.getElementById('bk-date').value;
+  const motif = document.getElementById('bk-motif').value;
+  const people = document.getElementById('bk-people').value;
+  const dateObj = new Date(date+'T00:00:00');
+  const fmtDate = dateObj.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  document.getElementById('sum-bat').textContent = bat.options[bat.selectedIndex].text.split('—')[0].trim();
+  document.getElementById('sum-room').textContent = room.options[room.selectedIndex].text.split('—')[0].trim();
+  document.getElementById('sum-date').textContent = fmtDate;
+  document.getElementById('sum-time').textContent = selectedSlot;
+  document.getElementById('sum-motif').textContent = motif;
+  document.getElementById('sum-people').textContent = people + ' participant(s)';
+}
+
+function confirmBooking() {
+  const room = document.getElementById('bk-room');
+  const date = document.getElementById('bk-date').value;
+  const motif = document.getElementById('bk-motif').value;
+  const dateObj = new Date(date+'T00:00:00');
+  const fmtDate = dateObj.toLocaleDateString('fr-FR',{day:'numeric',month:'long'});
+  document.getElementById('suc-room').textContent = room.options[room.selectedIndex].text.split('—')[0].trim();
+  document.getElementById('suc-time').textContent = fmtDate + ' · ' + selectedSlot;
+  document.getElementById('suc-motif').textContent = motif;
+  showBkPane(5);
+  // Add to table
+  const tbody = document.getElementById('resa-tbody');
+  const batSel = document.getElementById('bk-bat');
+  const batShort = batSel.value==='IUT'?'IUT':(batSel.value==='Galilee'?'Galilée':'Bât. '+batSel.value);
+  const tr = document.createElement('tr');
+  tr.innerHTML = `<td><strong>${room.options[room.selectedIndex].text.split('—')[0].trim()}</strong> — ${batShort}</td>
+    <td>${dateObj.toLocaleDateString('fr-FR',{weekday:'short',day:'numeric',month:'long',year:'numeric'})}</td>
+    <td>${selectedSlot}</td>
+    <td>${motif}</td>
+    <td><span class="resa-row-status badge-green">✓ Confirmée</span></td>
+    <td><button class="annuler-btn" onclick="showToast('❌ Réservation annulée')">Annuler</button></td>`;
+  tbody.insertBefore(tr, tbody.firstChild);
+  showToast('✓ Réservation confirmée ! Un e-mail vous a été envoyé.');
+}
+
+function updateSlots() { /* slots would refresh from API in real app */ }
+</script>
+</body>
+</html>
