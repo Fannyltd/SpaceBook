@@ -657,6 +657,115 @@
     transition: width .5s ease;
   }
   .quota-fill.warn { background: var(--gold); }
+
+  /* ─── SIGNAL BUTTON ─── */
+  .signal-btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 32px; height: 32px; border-radius: 8px; border: none; cursor: pointer;
+    background: rgba(230,126,34,.12); transition: all .18s; flex-shrink: 0;
+  }
+  .signal-btn:hover { background: rgba(230,126,34,.28); transform: scale(1.1); }
+  .signal-btn.already-sent { opacity: .45; cursor: default; }
+  .signal-btn.already-sent:hover { transform: none; background: rgba(230,126,34,.12); }
+  .action-cell { display: flex; gap: 8px; align-items: center; }
+
+  /* ─── SIGNAL MODAL ─── */
+  .sig-modal {
+    background: var(--navy-mid); border: 1px solid rgba(255,255,255,.12);
+    border-radius: 18px; padding: 30px; width: 500px; max-width: 96vw;
+    position: relative; animation: modalIn .28s ease;
+    max-height: 90vh; overflow-y: auto; scrollbar-width: thin;
+  }
+  .sig-header { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 20px; }
+  .sig-icon-wrap {
+    width: 46px; height: 46px; border-radius: 12px; flex-shrink: 0;
+    background: rgba(230,126,34,.15); border: 1px solid rgba(230,126,34,.3);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .sig-title { font-family: "Playfair Display", serif; font-size: 18px; color: var(--cream); margin-bottom: 3px; }
+  .sig-sub { font-size: 12.5px; color: var(--text-dim); }
+  .sig-room-tag {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 4px 11px; border-radius: 20px; font-size: 12px; font-weight: 600;
+    background: rgba(255,255,255,.06); border: 1px solid var(--border); color: var(--cream); margin-bottom: 18px;
+  }
+  .sig-abuse-banner {
+    background: rgba(231,76,60,.07); border: 1px solid rgba(231,76,60,.2);
+    border-radius: 10px; padding: 13px 16px; margin-bottom: 16px;
+    display: flex; gap: 10px; align-items: flex-start;
+  }
+  .sig-abuse-banner .ab-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+  .sig-abuse-banner p { font-size: 12px; color: rgba(231,76,60,.85); line-height: 1.6; }
+  .sig-abuse-banner p strong { color: var(--red); }
+  .sig-history-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 5px 12px; border-radius: 20px; font-size: 11.5px; font-weight: 600; margin-bottom: 18px;
+  }
+  .sig-history-badge.clean { background: rgba(46,204,113,.1);  color: var(--green); border: 1px solid rgba(46,204,113,.2); }
+  .sig-history-badge.warn  { background: rgba(201,168,76,.1);  color: var(--gold);  border: 1px solid rgba(201,168,76,.25); }
+  .sig-history-badge.bad   { background: rgba(231,76,60,.1);   color: var(--red);   border: 1px solid rgba(231,76,60,.2); }
+  .sig-section-label {
+    font-size: 11px; letter-spacing: .09em; text-transform: uppercase;
+    color: var(--text-dim); margin-bottom: 10px; font-weight: 500;
+  }
+  .sig-cat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 18px; }
+  .sig-check-item {
+    display: flex; align-items: center; gap: 9px;
+    background: rgba(255,255,255,.04); border: 1px solid var(--border);
+    border-radius: 9px; padding: 10px 12px; cursor: pointer;
+    transition: all .15s; font-size: 13px; color: var(--text-dim);
+  }
+  .sig-check-item:hover { background: rgba(230,126,34,.07); border-color: rgba(230,126,34,.25); color: var(--text); }
+  .sig-check-item.checked { background: rgba(230,126,34,.12); border-color: rgba(230,126,34,.35); color: var(--cream); }
+  .sig-check-item input[type=checkbox] { accent-color: #e67e22; cursor: pointer; flex-shrink: 0; }
+  .sig-check-item .item-icon { font-size: 15px; flex-shrink: 0; }
+  .sig-gravity { display: flex; gap: 8px; margin-bottom: 18px; }
+  .gravity-btn {
+    flex: 1; padding: 9px 6px; border-radius: 9px; border: 1px solid var(--border);
+    background: none; cursor: pointer; font-family: "DM Sans", sans-serif;
+    font-size: 12px; color: var(--text-dim); transition: all .15s;
+  }
+  .gravity-btn:hover { background: var(--card-hover); }
+  .gravity-btn.sel-low    { background: rgba(46,204,113,.1);  border-color: rgba(46,204,113,.3);  color: var(--green); font-weight: 600; }
+  .gravity-btn.sel-medium { background: rgba(201,168,76,.1);  border-color: rgba(201,168,76,.3);  color: var(--gold); font-weight: 600; }
+  .gravity-btn.sel-high   { background: rgba(231,76,60,.1);   border-color: rgba(231,76,60,.3);   color: var(--red); font-weight: 600; }
+  .sig-textarea {
+    width: 100%; min-height: 78px; resize: vertical;
+    background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1);
+    border-radius: 9px; color: var(--text); font-family: "DM Sans", sans-serif;
+    font-size: 13.5px; padding: 11px 14px; outline: none; transition: border-color .2s; margin-bottom: 16px;
+  }
+  .sig-textarea:focus { border-color: rgba(230,126,34,.4); }
+  .sig-textarea::placeholder { color: var(--text-dim); }
+  .sig-confirm-check {
+    display: flex; align-items: flex-start; gap: 10px; margin-bottom: 20px; cursor: pointer;
+  }
+  .sig-confirm-check input { accent-color: #e67e22; margin-top: 3px; cursor: pointer; }
+  .sig-confirm-check span { font-size: 12px; color: var(--text-dim); line-height: 1.55; }
+  .sig-confirm-check span strong { color: rgba(230,126,34,.9); }
+  .btn-signal-submit {
+    flex: 1; padding: 11px; border: none; border-radius: 9px;
+    background: #e67e22; color: #fff;
+    font-family: "DM Sans", sans-serif; font-size: 14px; font-weight: 600;
+    cursor: pointer; transition: all .2s;
+  }
+  .btn-signal-submit:hover { background: #d35400; transform: translateY(-1px); }
+  .btn-signal-submit:disabled { background: rgba(149,165,166,.25); color: var(--text-dim); cursor: not-allowed; transform: none; }
+  .sig-success { text-align: center; padding: 10px 0; }
+  .sig-success-circle {
+    width: 58px; height: 58px; border-radius: 50%;
+    background: rgba(230,126,34,.15); border: 2px solid rgba(230,126,34,.4);
+    display: flex; align-items: center; justify-content: center; font-size: 26px;
+    margin: 0 auto 16px; animation: popIn .4s cubic-bezier(.34,1.56,.64,1);
+  }
+  .sig-success h3 { font-family: "Playfair Display", serif; font-size: 19px; color: var(--cream); margin-bottom: 8px; }
+  .sig-success p { font-size: 13px; color: var(--text-dim); line-height: 1.6; margin-bottom: 18px; }
+  .ticket-num {
+    display: inline-block; padding: 6px 16px; border-radius: 20px;
+    background: rgba(230,126,34,.12); border: 1px solid rgba(230,126,34,.25);
+    font-size: 13px; font-weight: 600; color: #e67e22; margin-bottom: 20px;
+  }
+  .sig-divider { height: 1px; background: var(--border); margin: 16px 0; }
 </style>
 </head>
 <body>
@@ -828,14 +937,19 @@
               <th></th>
             </tr>
           </thead>
-          <tbody>
+          <tbody id="resa-tbody">
             <tr>
               <td><strong>A-204</strong> — Bât. A</td>
               <td>Mar. 25 mars 2026</td>
               <td>10h00 – 12h00</td>
               <td>Travail de groupe</td>
               <td><span class="resa-row-status badge-green">✓ Confirmée</span></td>
-              <td><button class="annuler-btn" onclick="showToast('❌ Réservation annulée')">Annuler</button></td>
+              <td class="action-cell">
+                <button class="signal-btn" onclick="openSignalModal(this,'A-204','Mar. 25 mars 2026','10h00 – 12h00')" title="Signaler un incident">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" fill="rgba(230,126,34,.25)" stroke="#e67e22" stroke-width="2" stroke-linejoin="round"/><line x1="12" y1="9" x2="12" y2="13" stroke="#e67e22" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="17" r="1" fill="#e67e22"/></svg>
+                </button>
+                <button class="annuler-btn" onclick="showToast('❌ Réservation annulée')">Annuler</button>
+              </td>
             </tr>
             <tr>
               <td><strong>B-105</strong> — Bât. B</td>
@@ -843,7 +957,12 @@
               <td>14h00 – 16h00</td>
               <td>Projet tutoré</td>
               <td><span class="resa-row-status badge-green">✓ Confirmée</span></td>
-              <td><button class="annuler-btn" onclick="showToast('❌ Réservation annulée')">Annuler</button></td>
+              <td class="action-cell">
+                <button class="signal-btn" onclick="openSignalModal(this,'B-105','Jeu. 27 mars 2026','14h00 – 16h00')" title="Signaler un incident">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" fill="rgba(230,126,34,.25)" stroke="#e67e22" stroke-width="2" stroke-linejoin="round"/><line x1="12" y1="9" x2="12" y2="13" stroke="#e67e22" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="17" r="1" fill="#e67e22"/></svg>
+                </button>
+                <button class="annuler-btn" onclick="showToast('❌ Réservation annulée')">Annuler</button>
+              </td>
             </tr>
             <tr>
               <td><strong>IUT-B102</strong> — IUT</td>
@@ -851,7 +970,12 @@
               <td>09h00 – 11h00</td>
               <td>Révision examen</td>
               <td><span class="resa-row-status badge-green">✓ Confirmée</span></td>
-              <td><button class="annuler-btn" onclick="showToast('❌ Réservation annulée')">Annuler</button></td>
+              <td class="action-cell">
+                <button class="signal-btn" onclick="openSignalModal(this,'IUT-B102','Lun. 30 mars 2026','09h00 – 11h00')" title="Signaler un incident">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" fill="rgba(230,126,34,.25)" stroke="#e67e22" stroke-width="2" stroke-linejoin="round"/><line x1="12" y1="9" x2="12" y2="13" stroke="#e67e22" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="17" r="1" fill="#e67e22"/></svg>
+                </button>
+                <button class="annuler-btn" onclick="showToast('❌ Réservation annulée')">Annuler</button>
+              </td>
             </tr>
             <tr style="opacity:.5">
               <td><strong>A-110</strong> — Bât. A</td>
@@ -904,6 +1028,122 @@
     </section>
 
   </main>
+</div>
+
+<!-- SIGNAL MODAL -->
+<div class="modal-overlay" id="signal-modal" onclick="closeSignalModal(event)">
+  <div class="sig-modal">
+    <button class="modal-close" onclick="document.getElementById('signal-modal').classList.remove('open')">✕</button>
+
+    <!-- FORM VIEW -->
+    <div id="sig-form-view">
+      <div class="sig-header">
+        <div class="sig-icon-wrap">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" fill="rgba(230,126,34,.2)" stroke="#e67e22" stroke-width="2" stroke-linejoin="round"/><line x1="12" y1="9" x2="12" y2="13" stroke="#e67e22" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="17" r="1" fill="#e67e22"/></svg>
+        </div>
+        <div>
+          <div class="sig-title">Signaler un incident</div>
+          <div class="sig-sub">Service technique — Sorbonne Paris Nord</div>
+        </div>
+      </div>
+
+      <div class="sig-room-tag" id="sig-room-tag">
+        📍 <span id="sig-room-label">A-204 · Mar. 25 mars · 10h00 – 12h00</span>
+      </div>
+
+      <!-- HISTORY BADGE -->
+      <div id="sig-history-wrap"></div>
+
+      <!-- ABUSE WARNING -->
+      <div class="sig-abuse-banner">
+        <div class="ab-icon">🚨</div>
+        <p>
+          <strong>Avertissement — Signalement responsable :</strong> Tout faux signalement (incident inventé ou exagéré) est détecté par le service de maintenance lors de l'intervention. Il est consigné dans votre <strong>historique de signalements</strong> et pris en compte lors de vos prochains signalements. En cas d'abus répétés, votre accès à cette fonctionnalité pourra être restreint par l'administration.
+        </p>
+      </div>
+
+      <div class="sig-section-label">Type d'incident(s) — cochez tout ce qui s'applique</div>
+      <div class="sig-cat-grid">
+        <label class="sig-check-item" onclick="toggleSigCheck(this)">
+          <input type="checkbox"> <span class="item-icon">📽️</span> Vidéoprojecteur HS
+        </label>
+        <label class="sig-check-item" onclick="toggleSigCheck(this)">
+          <input type="checkbox"> <span class="item-icon">🖥️</span> Écran / TV défectueux
+        </label>
+        <label class="sig-check-item" onclick="toggleSigCheck(this)">
+          <input type="checkbox"> <span class="item-icon">🔌</span> Câbles / connectique manquants
+        </label>
+        <label class="sig-check-item" onclick="toggleSigCheck(this)">
+          <input type="checkbox"> <span class="item-icon">🔊</span> Système audio en panne
+        </label>
+        <label class="sig-check-item" onclick="toggleSigCheck(this)">
+          <input type="checkbox"> <span class="item-icon">🪑</span> Manque de chaises
+        </label>
+        <label class="sig-check-item" onclick="toggleSigCheck(this)">
+          <input type="checkbox"> <span class="item-icon">🪵</span> Mobilier cassé / endommagé
+        </label>
+        <label class="sig-check-item" onclick="toggleSigCheck(this)">
+          <input type="checkbox"> <span class="item-icon">⚡</span> Prise électrique HS
+        </label>
+        <label class="sig-check-item" onclick="toggleSigCheck(this)">
+          <input type="checkbox"> <span class="item-icon">🌡️</span> Climatisation / chauffage
+        </label>
+        <label class="sig-check-item" onclick="toggleSigCheck(this)">
+          <input type="checkbox"> <span class="item-icon">💡</span> Éclairage défaillant
+        </label>
+        <label class="sig-check-item" onclick="toggleSigCheck(this)">
+          <input type="checkbox"> <span class="item-icon">🧹</span> Propreté / hygiène
+        </label>
+        <label class="sig-check-item" onclick="toggleSigCheck(this)">
+          <input type="checkbox"> <span class="item-icon">🌐</span> Wi-Fi / réseau absent
+        </label>
+        <label class="sig-check-item" onclick="toggleSigCheck(this)">
+          <input type="checkbox"> <span class="item-icon">🔒</span> Problème d'accès / serrure
+        </label>
+      </div>
+
+      <div class="sig-section-label">Niveau de gravité</div>
+      <div class="sig-gravity">
+        <button class="gravity-btn sel-low" id="grav-low" onclick="selectGravity('low')">🟢 Mineur<br><span style="font-size:10px;font-weight:400">Gêne légère</span></button>
+        <button class="gravity-btn" id="grav-medium" onclick="selectGravity('medium')">🟡 Modéré<br><span style="font-size:10px;font-weight:400">Utilisation difficile</span></button>
+        <button class="gravity-btn" id="grav-high" onclick="selectGravity('high')">🔴 Bloquant<br><span style="font-size:10px;font-weight:400">Salle inutilisable</span></button>
+      </div>
+
+      <div class="sig-section-label">Message au service technique <span style="color:var(--text-dim);font-weight:400;text-transform:none;letter-spacing:0">(optionnel)</span></div>
+      <textarea class="sig-textarea" id="sig-message" placeholder="Décrivez le problème avec plus de précision si nécessaire… Ex : le câble HDMI est absent depuis lundi, le vidéoprojecteur s'éteint après 5 minutes..."></textarea>
+
+      <div class="sig-divider"></div>
+
+      <label class="sig-confirm-check">
+        <input type="checkbox" id="sig-accept" onchange="updateSigSubmitBtn()">
+        <span>Je certifie que cet incident est <strong>réel et constaté</strong>. Je comprends que tout faux signalement sera enregistré dans mon historique et pourra entraîner des restrictions. Mon signalement sera traité dans les 48h ouvrées.</span>
+      </label>
+
+      <div class="bk-nav">
+        <button class="btn-secondary" onclick="document.getElementById('signal-modal').classList.remove('open')">Annuler</button>
+        <button class="btn-signal-submit" id="sig-submit-btn" disabled onclick="submitSignal()">⚠ Envoyer le signalement</button>
+      </div>
+    </div>
+
+    <!-- SUCCESS VIEW -->
+    <div id="sig-success-view" style="display:none">
+      <div class="sig-success">
+        <div class="sig-success-circle">⚠️</div>
+        <h3>Signalement transmis</h3>
+        <p>Votre incident a été transmis au service technique.<br>Une intervention sera planifiée dans les <strong style="color:var(--cream)">48h ouvrées</strong>.<br>Vous serez notifié·e une fois le problème résolu.</p>
+        <div class="ticket-num" id="sig-ticket-num">Ticket #SPN-2026-XXXX</div>
+        <div class="bk-summary" style="text-align:left;margin-bottom:20px;">
+          <div class="bk-summary-row"><span>Salle</span><span id="sig-sum-room">—</span></div>
+          <div class="bk-summary-row"><span>Gravité</span><span id="sig-sum-grav">—</span></div>
+          <div class="bk-summary-row"><span>Incidents</span><span id="sig-sum-items">—</span></div>
+        </div>
+        <div style="background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.2);border-radius:10px;padding:12px 16px;margin-bottom:20px;font-size:12px;color:rgba(201,168,76,.9);line-height:1.6;">
+          ⚠️ Rappel : ce signalement est consigné dans votre historique. Le service technique vérifiera la conformité de votre déclaration lors de l'intervention.
+        </div>
+        <button class="btn-resa" style="margin:0 auto" onclick="document.getElementById('signal-modal').classList.remove('open')">Fermer</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <!-- BOOKING MODAL -->
@@ -1525,6 +1765,94 @@ function confirmBooking() {
 }
 
 function updateSlots() { /* slots would refresh from API in real app */ }
+
+// ─── SIGNAL MODAL ───
+// Simulated history: 0 = clean, 1 = one past warning, 2 = bad record
+const userSignalHistory = 1; // change to 0 or 2 to test
+
+let currentGravity = 'low';
+let currentSignalBtn = null;
+
+function openSignalModal(btn, room, date, time) {
+  currentSignalBtn = btn;
+  currentGravity = 'low';
+
+  // Reset form
+  document.getElementById('sig-form-view').style.display = 'block';
+  document.getElementById('sig-success-view').style.display = 'none';
+  document.querySelectorAll('.sig-check-item').forEach(el => {
+    el.classList.remove('checked');
+    el.querySelector('input').checked = false;
+  });
+  document.getElementById('sig-message').value = '';
+  document.getElementById('sig-accept').checked = false;
+  document.getElementById('sig-submit-btn').disabled = true;
+  selectGravity('low');
+
+  // Fill room tag
+  document.getElementById('sig-room-label').textContent = room + ' · ' + date + ' · ' + time;
+  document.getElementById('sig-sum-room').textContent = room;
+
+  // History badge
+  const hw = document.getElementById('sig-history-wrap');
+  if (userSignalHistory === 0) {
+    hw.innerHTML = '<div class="sig-history-badge clean">✓ Historique vierge — aucun faux signalement</div>';
+  } else if (userSignalHistory === 1) {
+    hw.innerHTML = '<div class="sig-history-badge warn">⚠ 1 signalement non confirmé dans votre historique</div>';
+  } else {
+    hw.innerHTML = '<div class="sig-history-badge bad">🚨 Plusieurs faux signalements détectés — votre compte est sous surveillance</div>';
+  }
+
+  document.getElementById('signal-modal').classList.add('open');
+}
+
+function closeSignalModal(e) {
+  if (e.target === document.getElementById('signal-modal'))
+    document.getElementById('signal-modal').classList.remove('open');
+}
+
+function toggleSigCheck(label) {
+  const cb = label.querySelector('input');
+  // Let the native checkbox toggle first
+  setTimeout(() => {
+    label.classList.toggle('checked', cb.checked);
+    updateSigSubmitBtn();
+  }, 0);
+}
+
+function selectGravity(level) {
+  currentGravity = level;
+  document.getElementById('grav-low').className    = 'gravity-btn' + (level==='low'    ? ' sel-low'    : '');
+  document.getElementById('grav-medium').className = 'gravity-btn' + (level==='medium' ? ' sel-medium' : '');
+  document.getElementById('grav-high').className   = 'gravity-btn' + (level==='high'   ? ' sel-high'   : '');
+}
+
+function updateSigSubmitBtn() {
+  const anyChecked = document.querySelectorAll('.sig-check-item input:checked').length > 0;
+  const accepted = document.getElementById('sig-accept').checked;
+  document.getElementById('sig-submit-btn').disabled = !(anyChecked && accepted);
+}
+
+function submitSignal() {
+  const checked = [...document.querySelectorAll('.sig-check-item.checked')].map(el => el.textContent.trim());
+  const gravLabels = { low: '🟢 Mineur', medium: '🟡 Modéré', high: '🔴 Bloquant' };
+  const ticketNum = 'SPN-2026-' + Math.floor(1000 + Math.random() * 9000);
+
+  document.getElementById('sig-ticket-num').textContent = 'Ticket #' + ticketNum;
+  document.getElementById('sig-sum-grav').textContent = gravLabels[currentGravity];
+  document.getElementById('sig-sum-items').textContent = checked.slice(0, 3).join(', ') + (checked.length > 3 ? ' +' + (checked.length - 3) : '');
+
+  document.getElementById('sig-form-view').style.display = 'none';
+  document.getElementById('sig-success-view').style.display = 'block';
+
+  // Mark button as sent
+  if (currentSignalBtn) {
+    currentSignalBtn.classList.add('already-sent');
+    currentSignalBtn.title = 'Signalement déjà envoyé pour cette réservation';
+    currentSignalBtn.onclick = () => showToast('⚠ Un signalement a déjà été soumis pour cette réservation');
+  }
+  showToast('⚠ Signalement #' + ticketNum + ' transmis au service technique');
+}
 </script>
 </body>
 </html>
